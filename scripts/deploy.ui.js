@@ -14,6 +14,7 @@ const fs = require('fs')
 const aws = require('aws-sdk')
 const utils = require('./script.utils')
 const config = require('./script.config')
+const open = require('open')
 
 async function deployStaticS3 () {
   if (!fs.existsSync(config.distUIRemoteDir) || !fs.statSync(config.distUIRemoteDir).isDirectory() || !fs.readdirSync(config.distUIRemoteDir).length) {
@@ -31,10 +32,12 @@ async function deployStaticS3 () {
   await utils.s3.uploadDir(s3, config.s3DeploymentFolder,
     config.distUIRemoteDir, f => console.log(`  -> ${path.basename(f)}`))
 
-  const appUrl = `https://s3.amazonaws.com/${creds.params.Bucket}/${config.s3DeploymentFolder}`
-  console.log(`Access your app @ ${appUrl}/index.html !`)
+  return `https://s3.amazonaws.com/${creds.params.Bucket}/${config.s3DeploymentFolder}`
 }
 
 deployStaticS3()
-  .then(() => console.log('Succesfully deployed UI 🎉'))
+  .then((url) => {
+    console.log('Succesfully deployed UI 🎉')
+    return open(url)
+  })
   .catch(e => console.error(e))

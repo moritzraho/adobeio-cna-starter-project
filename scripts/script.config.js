@@ -68,7 +68,7 @@ config.actionUrls = Object.entries(config.wskManifestActions).reduce((obj, [name
   const webUri = (webArg && webArg !== 'no' && webArg !== 'false') ? 'web/' : ''
   obj[name] = (config.remoteActions || process.env['NODE_ENV'] === 'production')
     ? `${config.owApihost}/api/${config.owApiversion || 'v1'}/${webUri}${config.owNamespace}/${config.owDeploymentPackage}/${name}`
-    : `/actions/${name}` // local url if NODE_ENV!=prod and REMOTE_ACTIONS not set
+    : `http://localhost:9080/actions/${name}` // local url if NODE_ENV!=prod and REMOTE_ACTIONS not set
   return obj
 }, {})
 

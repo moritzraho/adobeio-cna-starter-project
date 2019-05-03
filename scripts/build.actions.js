@@ -56,4 +56,8 @@ async function buildActions () {
   console.log('Action Build succeeded!')
 }
 
-buildActions().catch(e => console.error(e))
+if (!module.parent) {
+  buildActions().catch(e => console.error(e))
+} else {
+  module.exports.buildActions = buildActions
+}

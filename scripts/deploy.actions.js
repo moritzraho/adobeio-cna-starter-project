@@ -58,6 +58,7 @@ function deployActionsSync () {
     `aio`,
     [
       'runtime', 'deploy',
+      '-i',
       '-m', config.distWskManifestFile
     ],
     { cwd: config.rootDir }

@@ -35,4 +35,8 @@ async function buildUI () {
   console.log('UI Build succeeded!')
 }
 
-buildUI().catch(e => console.error(e))
+if (!module.parent) {
+  buildUI().catch(e => console.error(e))
+} else {
+  module.exports.buildUI = buildUI
+}

@@ -17,53 +17,36 @@ const express = require('express')
 const ActionRunner = require('./runner')
 
 const config = require('./script.config')
-const open = require('open')
 
+// todo change this model this should just start the server
+// it should not take remoteActions under consideration which is a UI thing
+// think about backend only use case how would dev like to develop locally?
 async function run () {
-  /**
-   * Generate Config
-   */
-  require('./generate.config')
-
-  /**
-   * Make sure zip actions have their dependencies installed
-   */
-  require('./install.zip.actions.dep')
-
-  const app = express()
-
-  app.use(express.json())
-
   if (config.remoteActions) {
     /**
-    * Build && Deploy actions
-    */
-
+     * Build && Deploy actions
+     */
     await require('./build.actions').buildActions() // async
     require('./deploy.actions') // sync
+    // no need to start a server
+    // this is simply like a publish command
   } else {
     /**
-    * Actions as API
-    */
+     * Actions as API
+     */
+    const app = express()
+    app.use(express.json())
+
+    // Make sure zip actions have their dependencies installed
+    require('./install.zip.actions.dep') // sync
     app.all(
       '/actions/*',
       ActionRunner
     )
+    const port = Number(process.env.PORT || 9080)
+    app.listen(port)
+    console.log('Serving on port', port)
   }
-
-  const bundler = new Bundler('web-src/index.html', {
-    cache: false,
-    outDir: config.distUILocalDir,
-    contentHash: false,
-    watch: true
-  })
-  app.use(bundler.middleware())
-  const port = Number(process.env.PORT || 9000)
-  app.listen(port)
-
-  open(`http://localhost:${port}`)
-
-  console.log('Serving on port', port)
 }
 
 run()

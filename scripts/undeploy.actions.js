@@ -29,7 +29,7 @@ function undeployActionsSync () {
     `aio`,
     [
       'runtime', 'deploy',
-      'undeploy',
+      'undeploy', '-i',
       '-m', config.distWskManifestFile
     ],
     { cwd: config.rootDir }
